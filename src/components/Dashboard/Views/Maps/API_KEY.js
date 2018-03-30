@@ -1,1 +1,2 @@
-export const API_KEY = 'YOUR_API_KEY_HERE'
+import keys from '../../../../../config/keys.js'
+export const API_KEY = keys.google_maps.api_key

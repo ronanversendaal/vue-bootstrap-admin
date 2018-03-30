@@ -5,6 +5,7 @@
       <div class="row">
         <div class="col-md-5">
           <fg-input type="text"
+                    autocomplete='organization'
                     label="Company"
                     :disabled="true"
                     placeholder="Light dashboard"
@@ -21,6 +22,7 @@
         <div class="col-md-4">
           <fg-input type="email"
                     label="Email"
+                    autocomplete='email'
                     placeholder="Email"
                     v-model="user.email">
           </fg-input>
@@ -31,6 +33,7 @@
         <div class="col-md-6">
           <fg-input type="text"
                     label="First Name"
+                    autocomplete='given-name'
                     placeholder="First Name"
                     v-model="user.firstName">
           </fg-input>
@@ -38,6 +41,7 @@
         <div class="col-md-6">
           <fg-input type="text"
                     label="Last Name"
+                    autocomplete='family-name'
                     placeholder="Last Name"
                     v-model="user.lastName">
           </fg-input>
@@ -48,6 +52,7 @@
         <div class="col-md-12">
           <fg-input type="text"
                     label="Address"
+                    autocomplete='address-line1'
                     placeholder="Home Address"
                     v-model="user.address">
           </fg-input>
@@ -58,6 +63,7 @@
         <div class="col-md-4">
           <fg-input type="text"
                     label="City"
+                    autocomplete='address-level2'
                     placeholder="City"
                     v-model="user.city">
           </fg-input>
@@ -66,6 +72,7 @@
           <fg-input type="text"
                     label="Country"
                     placeholder="Country"
+                    autocomplete='country-name'
                     v-model="user.country">
           </fg-input>
         </div>
@@ -73,6 +80,7 @@
           <fg-input type="number"
                     label="Postal Code"
                     placeholder="ZIP Code"
+                    autocomplete='postal-code'
                     v-model="user.postalCode">
           </fg-input>
         </div>
