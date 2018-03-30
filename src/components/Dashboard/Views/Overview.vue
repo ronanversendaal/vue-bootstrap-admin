@@ -64,7 +64,7 @@
 
       </div>
       <div class="row">
-        <!-- <div class="col-md-8">
+        <div class="col-md-8">
           <chart-card :chart-data="lineChart.data"
                       :chart-options="lineChart.options"
                       :responsive-options="lineChart.responsiveOptions">
@@ -84,9 +84,9 @@
               </div>
             </template>
           </chart-card>
-        </div> -->
+        </div>
 
-        <!-- <div class="col-md-4">
+        <div class="col-md-4">
           <chart-card :chart-data="pieChart.data" chart-type="Pie">
             <template slot="header">
               <h4 class="card-title">Email Statistics</h4>
@@ -104,7 +104,7 @@
               </div>
             </template>
           </chart-card>
-        </div> -->
+        </div>
       </div>
 
       <div class="row">
