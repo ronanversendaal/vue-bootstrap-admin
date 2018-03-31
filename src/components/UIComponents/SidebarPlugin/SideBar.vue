@@ -5,7 +5,7 @@
        :data-image="backgroundImage">
     <div class="sidebar-wrapper">
       <div class="logo">
-        <a href="#" class="simple-text">
+        <a href="#" v-tooltip="longTitle" class="simple-text">
             <div class="logo-img">
                 <img src="static/img/vue-logo.png" alt="">
             </div>
@@ -40,7 +40,11 @@
     props: {
       title: {
         type: String,
-        default: 'Vue LBD'
+        default: 'Ronan\'s VAD'
+      },
+      longTitle: {
+        type: String,
+        default: 'Ronan\'s Vue Admin Dashboard'
       },
       backgroundColor: {
         type: String,
