@@ -14,11 +14,14 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs"
   },
   "dependencies": {
+    "@websanova/vue-auth": "^2.21.3-beta",
+    "axios": "^0.18.0",
     "bootstrap": "^4.0.0",
     "es6-promise": "^4.2.4",
     "google-maps": "^3.2.1",
     "v-tooltip": "^2.0.0-rc.31",
     "vue": "^2.5.16",
+    "vue-axios": "^2.1.1",
     "vue-clickaway": "^2.1.0",
     "vue-notifyjs": "^0.4.2",
     "vue-router": "^3.0.1",

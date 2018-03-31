@@ -8,8 +8,10 @@ import UserProfile from 'src/components/Dashboard/Views/UserProfile.vue'
 import TableList from 'src/components/Dashboard/Views/TableList.vue'
 import Typography from 'src/components/Dashboard/Views/Typography.vue'
 import Icons from 'src/components/Dashboard/Views/Icons.vue'
-import Maps from 'src/components/Dashboard/Views/Maps.vue'
 import Notifications from 'src/components/Dashboard/Views/Notifications.vue'
+import Login from 'src/components/Dashboard/Views/Auth/Login'
+
+import Articles from 'src/components/Dashboard/Views/Management/Articles/Articles'
 
 const routes = [
   {
@@ -26,6 +28,11 @@ const routes = [
         path: 'overview',
         name: 'Overview',
         component: Overview
+      },
+      {
+        path: '/login',
+        name: 'login',
+        component: Login
       },
       {
         path: 'user',
@@ -48,9 +55,12 @@ const routes = [
         component: Icons
       },
       {
-        path: 'maps',
-        name: 'Maps',
-        component: Maps
+        path: 'articles',
+        name: 'Articles',
+        component: Articles,
+        meta: {
+          auth: true
+        }
       },
       {
         path: 'notifications',

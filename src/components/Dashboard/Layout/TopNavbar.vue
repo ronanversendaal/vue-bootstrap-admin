@@ -55,7 +55,8 @@
             <a class="dropdown-item" href="#">Separated link</a>
           </drop-down>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <router-link v-if="!$auth.check()" to="/login" class="nav-link">Login</router-link>
+            <a v-if="$auth.check()" href="#" class="nav-link" @click="logout">
               Log out
             </a>
           </li>
@@ -92,6 +93,16 @@
       },
       hideSidebar () {
         this.$sidebar.displaySidebar(false)
+      },
+      logout () {
+        this.$auth.logout({
+          redirect: 'Overview',
+          makeRequest: false
+        // params: {},
+        // success: function () {},
+        // error: function () {},
+        // etc...
+        })
       }
     }
   }
