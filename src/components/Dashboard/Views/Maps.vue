@@ -1,5 +1,6 @@
 <template>
-  <gmap-map
+<div>
+<gmap-map
     id="map"
     :center="center"
     :zoom="13"
@@ -8,7 +9,13 @@
   >
     <gmap-marker :position="center">
     </gmap-marker>
+
   </gmap-map>
+      <div class="geolocation" @click="geolocation()">
+        <img src="/static/img/vue-logo.png" />
+      </div>
+</div>
+  
 </template>
 <script>
   import {API_KEY} from './Maps/API_KEY'
@@ -20,11 +27,23 @@
     }
   })
   export default {
+  
+    methods: {
+      geolocation: function () {
+        navigator.geolocation.watchPosition((position) => {
+          console.log(position)
+          this.center = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }
+        })
+      }
+    },
     data () {
       return {
         center: {
-          lat: 51.834992,
-          lng: 4.325201
+          lat: 51.8,
+          lng: 4.3
         },
         options: {
           styles: [{
