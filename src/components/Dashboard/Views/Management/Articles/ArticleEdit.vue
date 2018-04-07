@@ -1,83 +1,63 @@
 <template>
   <div class="content">
-      <div>
-          <form>
-            <article class="tile is-child box">
-              <h4 class="title">{{this.article.title}}</h4>
-
-                <div class="field">
-                  <label class="label">Title</label>
-                  <div class="control has-icons-left has-icons-right">
-                    <input class="input" name="title" type="text" v-model="article.title">
-                  </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-12">
+          <card>
+            <template slot="header">
+              <h4 class="card-title">#{{this.article.id}} - {{this.article.title}}</h4>
+              <p class="card-category">Edit article</p>
+            </template>
+            <form>
+              <div class="row">
+                <div class="col-sm-12">
+                  <fg-input type="text"
+                            label="Title"
+                            placeholder="Title"
+                            v-model="article.title">
+                  </fg-input>
                 </div>
-                <div class="field">
-                  <label class="label">Subtitle</label>
-                  <div class="control has-icons-left has-icons-right">
-                    <input class="input" name="subtitle" type="text" v-model="article.subtitle">
-                  </div>
-                </div>
-                <div class="field">
-                  <label class="label">Published</label>
-                  <div class="control has-icons-left has-icons-right">
-                    <label class="checkbox">
-                      <input type="checkbox" @click="toggleIsPublishing" :checked="is_publishing">
-                      Ready to publish
-                    </label>
-                  </div>
-                  <p class="control">
-                    <datepicker 
-                      name="published_at" 
-                      v-if="is_publishing"
-                      v-model="article.published_at"
-                      :config="{
-                        enableTime: true, 
-                        defaultDate : article.published_at, 
-                        time_24hr: true, 
-                        dateFormat: 'Y-m-d H:i:S' 
-                        }"></datepicker>
-                  </p>
-                </div>
-            </article>
-            <div class="box">
-                <h1 class="title">Edit article body</h1>
-                <quill name="body" :options="{ theme: 'snow' }" ref="qc"></quill>
-
-                <div class="field has-addons button-group">
-                  <a class="button is-medium is-danger">
-                    <span class="icon is-small">
-                      <i class="fa fa-trash"></i>
-                    </span>
-                    <span>Delete</span>
-                  </a>
-                  <a @click="$router.history.go(-1)" class="button is-medium">
-                    <span class="icon is-small">
-                      <i class="fa fa-arrow-left"></i>
-                    </span>
-                    <span>Back</span>
-                  </a>
-                  
-                  <a @click="saveForm" class="button is-medium  is-marginless is-info">
-                    <span class="icon is-small">
-                      <i class="fa fa-save"></i>
-                    </span>
-                    <span>Save</span>
-                  </a>
               </div>
-            </div>
-
-          </form>
+              <div class="row">
+                <div class="col-sm-12">
+                  <fg-input type="text"
+                            label="Subtitle"
+                            placeholder="Subtitle"
+                            v-model="article.subtitle">
+                  </fg-input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-8">
+                  <fg-input type="date"
+                            id="datepicker"
+                            label="Subtitle"
+                            placeholder="Subtitle">
+                  </fg-input>
+                </div>
+                <div class="col-sm-4">
+                  <fg-input type="time"
+                            label="Subtitle"
+                            placeholder="Subtitle">
+                  </fg-input>
+                </div>
+              </div>
+            </form>
+          </card>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import Quill from 'vue-bulma-quill'
-import Datepicker from 'vue-bulma-datepicker'
 
+import Card from 'src/components/UIComponents/Cards/Card.vue'
+// import Quill from 'vue-bulma-quill'
 export default {
   components: {
-    Datepicker, Quill
+    Card
+    // Datepicker, Quill
   },
   data () {
     return {
@@ -117,22 +97,17 @@ export default {
       })
     }
   },
+  mounted () {
+  },
   created () {
     this.$http({
       url: '/articles/' + this.$route.params.id
     }).then((response) => {
       this.article = response.data
-      // Sets current editor value with article body
-      this.$refs.qc.editor.clipboard.dangerouslyPasteHTML(0, this.article.body)
 
       if (this.article.published_at !== null) {
         this.is_publishing = true
       }
-
-      // Updates article body on change
-      this.$refs.qc.editor.on('text-change', () => {
-        this.article.body = this.$refs.qc.editor.container.firstChild.innerHTML
-      })
     }).catch((error) => {
       console.log(error)
     })
@@ -152,9 +127,4 @@ export default {
     min-width: 32.9%;
   }
 }
-</style>
-
-
-<style lang="styl">
-@import "~quill/assets/snow";
 </style>

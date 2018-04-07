@@ -1,68 +1,73 @@
 <template>
-  <div class="content has-text-centered">
-      <div>
-        <article class="tile is-child box" v-if="this.articles.length > 0">
-          <h4 class="title">Table Responsive</h4>
-          <div class="table-responsive">
-            <table class="table is-bordered is-striped is-narrow">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Published at</th>
-                  <th colspan="3">Links</th>
-                </tr>
-              </thead>
-              <tfoot>
-                <tr>
-                  <th>Title</th>
-                  <th>Published at</th>
-                  <th colspan="3">Links</th>
-                </tr>
-              </tfoot>
-              <tbody>
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <card>
+            <template slot="header">
+              <h4 class="card-title">Articles</h4>
+              <p class="card-category">Manage publishings</p>
+            </template>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Published at</th>
+                    <th colspan="2">Links</th>
+                  </tr>
+                </thead>
+                <tbody>
                 <tr v-for="article in this.articles" :key="article.id">
                   <td>
-                   <router-link :to="{ name: 'ArticleEdit', params : { id : article.id}}">{{article.title}}</router-link>
+                    <router-link :to="{name: 'ArticleEdit', params : {id: article.id}}">
+                      {{article.title}}
+                    </router-link>
+                  </td>
+                  <td><span class="small">{{article.published_at}}</span></td>
+                  <td>
+                    <router-link class="btn btn-primary btn-fill btn-block btn-xs" :to="{name: 'ArticleEdit', params : {id: article.id}}">
+                      <i class="fa fa-edit"></i>
+                    </router-link>
                   </td>
                   <td>
-                    <router-link to="">{{article.published_at}}</router-link>
-                  </td>
-                  <td class="is-icon">
-                    <a href="#">
-                      <i class="fa fa-edit"></i>
-                    </a>
-                  </td>
-                  <td class="is-icon">
-                    <a href="#">
+                    <router-link class="btn btn-danger btn-fill btn-block btn-xs" :to="{name: 'ArticleEdit', params : {id: article.id}}">
                       <i class="fa fa-close"></i>
-                    </a>
-                  </td>
-                  <td class="is-icon">
-                    <a href="#">
-                      <i class="fa fa-globe"></i>
-                    </a>
+                    </router-link>
                   </td>
                 </tr>
-              </tbody>
-            </table>
-          </div>
-        </article>
+                </tbody>
+              </table>
+            </div>
+          </card>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Card from 'src/components/UIComponents/Cards/Card.vue'
+const tableColumns = ['Title', 'Published at', 'Links']
 export default {
+  components: {
+    Card
+  },
   data () {
     return {
-      articles: []
+      articles: [],
+      tableColumns: [],
+      table1: {
+        columns: [...tableColumns],
+        data: []
+      }
     }
   },
   mounted () {
     this.$http({
       url: '/articles'
     }).then((response) => {
-      this.articles = response.data
+      this.articles = this.table1.data = response.data
       console.log(this.articles)
     }).catch((error) => {
       console.log(error)

@@ -17,21 +17,22 @@
   </table>
 </template>
 <script>
-  export default {
-    name: 'l-table',
-    props: {
-      columns: Array,
-      data: Array
+import snake from 'to-snake-case'
+export default {
+  name: 'l-table',
+  props: {
+    columns: Array,
+    data: Array
+  },
+  methods: {
+    hasValue (item, column) {
+      return item[snake(column.toLowerCase())] !== 'undefined'
     },
-    methods: {
-      hasValue (item, column) {
-        return item[column.toLowerCase()] !== 'undefined'
-      },
-      itemValue (item, column) {
-        return item[column.toLowerCase()]
-      }
+    itemValue (item, column) {
+      return item[snake(column.toLowerCase())]
     }
   }
+}
 </script>
 <style>
 </style>

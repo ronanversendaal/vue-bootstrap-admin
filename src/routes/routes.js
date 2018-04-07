@@ -11,7 +11,9 @@ import Icons from 'src/components/Dashboard/Views/Icons.vue'
 import Notifications from 'src/components/Dashboard/Views/Notifications.vue'
 import Login from 'src/components/Dashboard/Views/Auth/Login'
 
-import Articles from 'src/components/Dashboard/Views/Management/Articles/Articles'
+import ArticleList from 'src/components/Dashboard/Views/Management/Articles/Articles'
+import Articles from 'src/components/Dashboard/Views/Management/Articles/'
+import ArticleEdit from 'src/components/Dashboard/Views/Management/Articles/ArticleEdit'
 
 const routes = [
   {
@@ -56,11 +58,49 @@ const routes = [
       },
       {
         path: 'articles',
-        name: 'Articles',
         component: Articles,
+        redirect: '/admin/articles',
         meta: {
-          auth: true
-        }
+          auth: true,
+          link: '../components/Dashboard/Views/Management/Articles/index.vue'
+        },
+        children: [
+          {
+            name: 'Articles',
+            path: '/',
+            component: ArticleList
+          },
+          {
+            name: 'ArticleEdit',
+            path: ':id/edit',
+            component: ArticleEdit
+          }
+        ]
+      },
+      {
+        path: 'projects',
+        // component: lazyLoading('management/projects', true),
+        meta: {
+          link: 'management/projects/index.vue'
+        },
+        children: [
+          {
+            name: 'Projects',
+            path: '',
+            // component: lazyLoading('management/projects/Projects'),
+            meta: {
+              link: 'management/projects/Projects.vue'
+            }
+          },
+          {
+            name: 'ProjectEdit',
+            path: ':id/edit',
+            // component: lazyLoading('management/projects/ProjectEdit'),
+            meta: {
+              link: 'management/projects/ProjectEdit.vue'
+            }
+          }
+        ]
       },
       {
         path: 'notifications',
@@ -76,9 +116,10 @@ const routes = [
  * Asynchronously load view (Webpack Lazy loading compatible)
  * The specified component must be inside the Views folder
  * @param  {string} name  the filename (basename) of the view to load.
-function view(name) {
-   var res= require('../components/Dashboard/Views/' + name + '.vue');
-   return res;
-};**/
+ **/
+function view (name) {
+  var res = import('../components/Dashboard/Views/' + name + '.vue')
+  return res
+}
 
 export default routes
