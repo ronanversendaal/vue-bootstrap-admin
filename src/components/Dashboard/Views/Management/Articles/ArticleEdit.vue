@@ -31,15 +31,18 @@
                 <div class="col-sm-8">
                   <fg-input type="date"
                             id="datepicker"
-                            label="Subtitle"
-                            placeholder="Subtitle">
+                            label="Publish date"
+                            :value="toDateInputValue().slice(0, 10)">
                   </fg-input>
                 </div>
                 <div class="col-sm-4">
                   <fg-input type="time"
-                            label="Subtitle"
-                            placeholder="Subtitle">
+                            label="Published time"
+                            :value="toDateInputValue().slice(11, 16)">
                   </fg-input>
+                </div>
+                <div class="col-sm-12">
+                  <button @click="saveForm" class="btn btn-info btn-fill float-right">Save</button>
                 </div>
               </div>
             </form>
@@ -72,6 +75,12 @@ export default {
     }
   },
   methods: {
+    toDateInputValue () {
+      var local = new Date()
+      local.setMinutes(local.getMinutes() - local.getTimezoneOffset())
+
+      return local.toJSON()
+    },
     toggleIsPublishing () {
       this.is_publishing = !this.is_publishing
     },
