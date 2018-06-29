@@ -23,17 +23,7 @@ Vue.router = router
 // plugin setup
 Vue.use(VueAxios, axios)
 Vue.use(VueAuth, {
-  auth: {
-    request: function (req, token) {
-      this.options.http._setHeaders.call(this, req, {
-        Authorization: config.api.token
-      })
-    },
-    response: function (res) {
-      // Get Token from response body
-      return res.data
-    }
-  },
+  auth: require('@websanova/vue-auth/drivers/auth/bearer'),
   http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
   router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
   loginData: { url: config.api.loginURL, fetchUser: false },

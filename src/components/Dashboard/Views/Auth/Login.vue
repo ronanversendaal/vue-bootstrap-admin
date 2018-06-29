@@ -83,13 +83,16 @@ export default {
         headers: {
           'Content-Type': 'application/json'
         },
-        data: this.data.body,
+        data: this.data.user,
         rememberMe: this.data.rememberMe,
         redirect: {name: redirect ? redirect.from.name : 'Overview'},
-        success (res) {},
+        success (res) {
+          this.$auth.token('default_auth_token', res.data.access_token)
+          console.log('Fucking login!!!', JSON.stringify(this.$auth.token, null, 2))
+        },
         error (err) {
-          if (err.response) {
-            this.error = err.response.data.message
+          if (err) {
+            this.error = err.response.data.error
           } else {
             // Something happened in setting up the request that triggered an Error
             console.log('Error', err)
