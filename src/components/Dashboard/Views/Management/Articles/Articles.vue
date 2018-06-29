@@ -68,7 +68,6 @@ export default {
       url: '/articles'
     }).then((response) => {
       this.articles = this.table1.data = response.data
-      console.log(this.articles)
     }).catch((error) => {
       console.log(error)
     })
