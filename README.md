@@ -2,8 +2,10 @@
 
 > Admin dashboard based on light bootstrap dashboard UI template + vue-router
 
-This project is a vue version of [Light bootstrap dashboard](https://www.creative-tim.com/product/light-bootstrap-dashboard)
-designed for vue js. The dashboard includes Bootstrap 4, vue-router, chartist, google-maps and several other plugins/components.
+This project is a custome version of [Vue Light bootstrap dashboard](http://vuejs.creative-tim.com/vue-light-bootstrap-dashboard)
+designed my own use case. This dashboard uses the  Webpack version: 4.4.1 as opposed to the forked project.
+
+This includes some breaking changes is Chartist and thus decided to remove this. 
 
 Check the [Live Demo here](http://vuejs.creative-tim.com/vue-light-bootstrap-dashboard).
 
@@ -24,7 +26,7 @@ The repo uses [vue-cli](https://github.com/vuejs/vue-cli) scaffolding which take
 
 ### install dependencies
 `npm install`
-### serve with hot reload at localhost:8000
+### serve with hot reload at localhost:3001
 `npm run dev`
 ### build for production with minification
 `npm run build`
