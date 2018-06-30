@@ -2,8 +2,8 @@
   "name": "vue-light-bootstrap-dashboard",
   "version": "1.0.0",
   "description": "Vue light bootstrap dashboard",
-  "homepage": "http://lightadmin.ronanversendaal.com",
-  "author": "cristijora <joracristi@gmail.com>",
+  "homepage": "https://admin.ronanversendaal.com",
+  "author": "Ronan Versendaal <info@ronanversendaal.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
@@ -24,8 +24,10 @@
     "vue": "^2.5.16",
     "vue-axios": "^2.1.1",
     "vue-clickaway": "^2.1.0",
+    "vue-moment": "^4.0.0",
     "vue-notifyjs": "^0.4.2",
     "vue-router": "^3.0.1",
+    "vue2-editor-pure": "^0.1.6",
     "vue2-google-maps": "^0.8.11"
   },
   "devDependencies": {
