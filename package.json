@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@websanova/vue-auth": "^2.21.3-beta",
+    "@websanova/vue-upload": "^0.2.14-beta",
     "axios": "^0.18.0",
     "bootstrap": "^4.0.0",
     "es6-promise": "^4.2.4",

@@ -43,6 +43,11 @@
                 </div>
               </div>
               <div class="row">
+                <div class="col-sm-12">
+                  <UploadGallery :data="article" :type="'article'" />
+                </div>
+              </div>
+              <div class="row">
                 <div class="col-sm-8">
                   <fg-input type="date"
                             id="datepicker"
@@ -75,13 +80,17 @@ import Card from 'src/components/UIComponents/Cards/Card.vue'
 import { VueEditor } from 'vue2-editor-pure'
 import { ImageDrop } from 'quill-image-drop-module'
 import publishingMixin from 'src/mixins/publishingMixin.js'
+import UploadGallery from 'src/Components/UIComponents/Inputs/UploadGallery'
+
+import { EventBus } from 'src/main'
 
 import notificationMixin from 'src/mixins/notificationMixin.js'
 
 export default {
   components: {
     Card,
-    VueEditor
+    VueEditor,
+    UploadGallery
   },
   mixins: [publishingMixin, notificationMixin],
   data () {
@@ -113,6 +122,7 @@ export default {
         data.append(key, this.article[key])
       }
 
+      // Might set this in seperate layer.
       this.$http({
         method: 'PUT',
         url: '/articles/' + this.article.id,
@@ -129,10 +139,10 @@ export default {
       url: '/articles/' + this.$route.params.id
     }).then((response) => {
       this.article = response.data
-
+      EventBus.$emit('set-resource', this.article)
       this.setInputTime(this.article.published_at)
     }).catch((error) => {
-      console.log(error)
+      this.notify(`Error connecting to server: <br/>${error.message}`, 'danger')
     })
   }
 

@@ -14,6 +14,7 @@ import routes from './routes/routes'
 
 Vue.use(VueRouter)
 Vue.use(require('vue-moment'))
+Vue.use(require('@websanova/vue-upload'))
 // configure router
 const router = new VueRouter({
   routes, // short for routes: routes
