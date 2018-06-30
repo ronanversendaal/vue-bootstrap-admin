@@ -7,6 +7,7 @@ function resolve (dir) {
 var webpackConfig = {
   resolve: {
     alias: {
+      'config': resolve('config'),
       'src': resolve('src'),
       'assets': resolve('src/assets'),
       'components': resolve('src/components')
