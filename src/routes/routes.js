@@ -117,9 +117,9 @@ const routes = [
  * The specified component must be inside the Views folder
  * @param  {string} name  the filename (basename) of the view to load.
  **/
-function view (name) {
-  var res = import('../components/Dashboard/Views/' + name + '.vue')
-  return res
-}
+// function view (name) {
+//   var res = import('../components/Dashboard/Views/' + name + '.vue')
+//   return res
+// }
 
 export default routes
