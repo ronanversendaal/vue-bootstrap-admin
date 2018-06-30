@@ -28,17 +28,32 @@
                 </div>
               </div>
               <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label class="control-label">
+                      Article content
+                    </label>
+
+                    <vue-editor 
+                    :customModules="customModulesForEditor"
+                    :editorOptions="editorSettings" 
+                    v-model="article.body">
+                    </vue-editor>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
                 <div class="col-sm-8">
                   <fg-input type="date"
                             id="datepicker"
-                            label="Publish date"
-                            :value="toDateInputValue().slice(0, 10)">
+                            v-model="current.date"
+                            label="Publish date">
                   </fg-input>
                 </div>
                 <div class="col-sm-4">
                   <fg-input type="time"
-                            label="Published time"
-                            :value="toDateInputValue().slice(11, 16)">
+                            v-model="current.time"
+                            label="Published time">
                   </fg-input>
                 </div>
                 <div class="col-sm-12">
@@ -56,12 +71,19 @@
 <script>
 
 import Card from 'src/components/UIComponents/Cards/Card.vue'
-// import Quill from 'vue-bulma-quill'
+
+import { VueEditor } from 'vue2-editor-pure'
+import { ImageDrop } from 'quill-image-drop-module'
+import publishingMixin from 'src/mixins/publishingMixin.js'
+
+import notificationMixin from 'src/mixins/notificationMixin.js'
+
 export default {
   components: {
-    Card
-    // Datepicker, Quill
+    Card,
+    VueEditor
   },
+  mixins: [publishingMixin, notificationMixin],
   data () {
     return {
       article: {
@@ -71,27 +93,23 @@ export default {
         published_at: null,
         body: null
       },
-      is_publishing: false
+      customModulesForEditor: [
+        { alias: 'imageDrop', module: ImageDrop }
+      ],
+      editorSettings: {
+        modules: {
+          imageDrop: true
+        }
+      }
     }
   },
   methods: {
-    toDateInputValue () {
-      var local = new Date()
-      local.setMinutes(local.getMinutes() - local.getTimezoneOffset())
-
-      return local.toJSON()
-    },
-    toggleIsPublishing () {
-      this.is_publishing = !this.is_publishing
-    },
     saveForm () {
       const data = new URLSearchParams()
 
+      this.article.published_at = this.getCurrentPublishing()
+
       for (let key in this.article) {
-        // if (this.article[key] !== null) {
-        if (key === 'published_at' && this.is_publishing === false) {
-          this.article[key] = ''
-        }
         data.append(key, this.article[key])
       }
 
@@ -100,13 +118,11 @@ export default {
         url: '/articles/' + this.article.id,
         data
       }).then((response) => {
-        console.log('Article saved!', response)
+        this.notify(`Article '${response.data.title}' saved!`)
       }).catch((error) => {
-        console.log(error)
+        this.notify(`Could not save the article! <br/>${error.message}`, 'danger')
       })
     }
-  },
-  mounted () {
   },
   created () {
     this.$http({
@@ -114,9 +130,7 @@ export default {
     }).then((response) => {
       this.article = response.data
 
-      if (this.article.published_at !== null) {
-        this.is_publishing = true
-      }
+      this.setInputTime(this.article.published_at)
     }).catch((error) => {
       console.log(error)
     })

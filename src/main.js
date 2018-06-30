@@ -13,6 +13,7 @@ import VueAuth from '@websanova/vue-auth'
 import routes from './routes/routes'
 
 Vue.use(VueRouter)
+Vue.use(require('vue-moment'))
 // configure router
 const router = new VueRouter({
   routes, // short for routes: routes
@@ -32,6 +33,8 @@ Vue.use(VueAuth, {
 })
 
 Vue.use(LightBootstrap)
+
+export const EventBus = new Vue()
 
 /* eslint-disable no-new */
 new Vue({
