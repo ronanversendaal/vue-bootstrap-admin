@@ -43,11 +43,6 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-sm-12">
-                  <UploadGallery :data="article" :type="'article'" />
-                </div>
-              </div>
-              <div class="row">
                 <div class="col-sm-8">
                   <fg-input type="date"
                             id="datepicker"
@@ -66,6 +61,20 @@
                 </div>
               </div>
             </form>
+          </card>
+          <card>
+            <template slot="header">
+              <h4 class="card-title">Manage images</h4>
+            </template>
+                  
+            <UploadGallery />
+            <div v-for="album in albums" :key="album.id" class="album" :class="{ selected: album.id === currentAlbum}">
+              <div class="row" @click="setCurrentAlbum(album.id)">
+                <div v-for="image in album.images.data" :key="image.id" class="col-sm-4">
+                  <img :src="image.path" class="img-fluid" />
+                </div>
+              </div>
+            </div>
           </card>
         </div>
       </div>
@@ -95,12 +104,15 @@ export default {
   mixins: [publishingMixin, notificationMixin],
   data () {
     return {
+      currentAlbum: null,
+      albums: [],
       article: {
         id: null,
         title: null,
         subtitle: null,
         published_at: null,
-        body: null
+        body: null,
+        images: {}
       },
       customModulesForEditor: [
         { alias: 'imageDrop', module: ImageDrop }
@@ -113,6 +125,12 @@ export default {
     }
   },
   methods: {
+    setCurrentAlbum (album) {
+      this.currentAlbum = album
+      EventBus.$emit('set-album', {
+        id: album
+      })
+    },
     saveForm () {
       const data = new URLSearchParams()
 
@@ -139,11 +157,26 @@ export default {
       url: '/articles/' + this.$route.params.id
     }).then((response) => {
       this.article = response.data
-      EventBus.$emit('set-resource', this.article)
       this.setInputTime(this.article.published_at)
-    }).catch((error) => {
-      this.notify(`Error connecting to server: <br/>${error.message}`, 'danger')
+
+      return this.$http({
+        url: '/articles/' + this.$route.params.id + '/albums'
+      })
     })
+      .then((response) => {
+        let albumId = response.data.first.id
+        this.albums = response.data.data
+
+        EventBus.$emit('set-resource', {
+          resource: this.article,
+          id: albumId
+        })
+
+        this.setCurrentAlbum(albumId)
+      })
+      .catch((error) => {
+        this.notify(`Error connecting to server: <br/>${error.message}`, 'danger')
+      })
   }
 
 }
@@ -158,6 +191,14 @@ export default {
   &>.button{
     flex-grow: 1;
     min-width: 32.9%;
+  }
+}
+
+.album{
+  margin: 15px 0;
+  padding: 15px;
+  &.selected{
+   outline: 1px solid #333333; 
   }
 }
 </style>

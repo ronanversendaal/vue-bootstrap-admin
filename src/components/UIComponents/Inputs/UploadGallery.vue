@@ -1,16 +1,21 @@
 <template>
-  <div id="resource-gallery-dropzone">
-    <button v-on:click="$upload.reset('resource-gallery')" :disabled="$upload.meta('resource-gallery').status === 'sending'">
+  <div :id="`resource-gallery-dropzone-${album}`">
+    <button 
+      v-on:click="$upload.reset('resource-gallery')" 
+      :disabled="$upload.meta('resource-gallery').status === 'sending'"
+      class="btn btn-xs">
         Clear
     </button>
-    <div v-on:click="$upload.select('resource-gallery')" style="min-height: 300px; border: 1px solid #333">
-      <button :disabled="$upload.meta('resource-gallery').status === 'sending'">
-          <span v-show="$upload.meta('resource-gallery').status === 'sending'">Uploading...</span>
-          <span v-show="!$upload.meta('resource-gallery').status === 'sending'">Select Photos</span>
-          <span>Upload files</span>
-      </button>
 
-      
+    <div 
+      v-on:click="$upload.select('resource-gallery')"
+      :disabled="$upload.meta('resource-gallery').status === 'sending'"
+      class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <p class="lead text-center" v-show="$upload.meta('resource-gallery').status === 'sending'">Uploading...</p>
+        <p class="lead text-center" v-show="$upload.meta('resource-gallery').status !== 'sending'">Click or drag to upload</p>
+        <p class="text-center" v-show="$upload.meta('resource-gallery').status !== 'sending'">Click on an album to switch destination</p>
+      </div>
     </div>
 
     <div class="progress">
@@ -73,14 +78,20 @@ import notificationMixin from 'src/mixins/notificationMixin.js'
 export default {
   data () {
     return {
-      resource: {}
+      resource: {},
+      album: null
     }
   },
   mixins: [notificationMixin],
-  props: ['type'],
-  created () {
-    EventBus.$on('set-resource', (resource) => {
-      this.resource = resource
+  mounted () {
+    EventBus.$on('set-album', (options) => {
+      this.album = options.id
+      this.reset()
+    })
+
+    EventBus.$on('set-resource', (options) => {
+      this.resource = options.resource
+
       this.$upload.new('resource-gallery', {
         async: true,
         maxFiles: 20,
@@ -100,7 +111,7 @@ export default {
           this.notify(`An error occured while uploading: ${error}`, 'danger')
         },
         http (data) {
-          axios.post(data.url)
+          axios.post(data.url, data.body)
             .then(data.success)
             .catch(data.error)
         },
@@ -116,9 +127,9 @@ export default {
     reset () {
       let currentFilesLength = (this.resource.images) ? this.resource.images.length : 0
       this.$upload.reset('resource-gallery', {
-        url: `${this.type}/${this.resource.id}/images`,
+        url: `/images/${this.album}`,
         currentFiles: currentFilesLength,
-        dropzoneId: 'resource-gallery-dropzone'
+        dropzoneId: 'resource-gallery-dropzone-' + this.album
       })
     }
   },
