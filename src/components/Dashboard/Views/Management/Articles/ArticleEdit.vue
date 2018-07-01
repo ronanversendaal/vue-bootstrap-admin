@@ -57,7 +57,7 @@
                   </fg-input>
                 </div>
                 <div class="col-sm-12">
-                  <button @click="saveForm" class="btn btn-info btn-fill float-right">Save</button>
+                  <button @click.prevent="saveForm" class="btn btn-info btn-fill float-right">Save</button>
                 </div>
               </div>
             </form>
@@ -111,8 +111,7 @@ export default {
         title: null,
         subtitle: null,
         published_at: null,
-        body: null,
-        images: {}
+        body: null
       },
       customModulesForEditor: [
         { alias: 'imageDrop', module: ImageDrop }

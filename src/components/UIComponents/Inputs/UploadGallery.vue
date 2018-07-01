@@ -24,12 +24,7 @@
         </div>
     </div>
 
-    <div v-if="$upload.errors('resource-gallery').length" class="text-danger">
-        {{ $upload.errors('resource-gallery')[0].message }}
-    </div>
-
     <div>
-
         <div v-for="file in $upload.files('resource-gallery').progress">
             <div>
                 {{ file.name }}
@@ -79,16 +74,11 @@ export default {
         async: true,
         maxFiles: 20,
         multiple: true,
-        onStart () {
-          // this.$toggle.show('resource:media:uploads')
-        },
         onSuccess (res) {
-          // this.resource.images.push(res.data)
           EventBus.$emit('fetch-albums')
           this.notify('File upload complete.')
         },
         onEnd () {
-          this.notify('File handling complete.', 'info')
           this.reset()
         },
         onError () {
@@ -106,9 +96,6 @@ export default {
           axios.post(data.url, data.body)
             .then(data.success)
             .catch(data.error)
-        },
-        parseErrors (errors) {
-          // console.log(errors)
         }
       })
 

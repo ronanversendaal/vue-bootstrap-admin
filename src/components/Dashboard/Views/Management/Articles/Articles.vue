@@ -24,7 +24,7 @@
                       {{article.title}}
                     </router-link>
                   </td>
-                  <td><span class="small">{{article.published_at}}</span></td>
+                  <td><span class="small">{{article.published_at | moment('DD-MM-YYYY HH:mm') }}</span></td>
                   <td>
                     <router-link class="btn btn-primary btn-fill btn-block btn-xs" :to="{name: 'ArticleEdit', params : {id: article.id}}">
                       <i class="fa fa-edit"></i>
