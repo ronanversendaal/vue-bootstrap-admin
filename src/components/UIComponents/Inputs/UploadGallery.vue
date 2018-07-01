@@ -100,7 +100,8 @@ export default {
           // this.$toggle.show('resource:media:uploads')
         },
         onSuccess (res) {
-          this.resource.images.push(res.data.data)
+          // this.resource.images.push(res.data)
+          EventBus.$emit('fetch-albums')
           this.notify('File upload complete.')
         },
         onEnd () {

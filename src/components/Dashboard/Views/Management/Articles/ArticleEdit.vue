@@ -125,6 +125,11 @@ export default {
     }
   },
   methods: {
+    fetchAlbums () {
+      return this.$http({
+        url: '/articles/' + this.$route.params.id + '/albums'
+      })
+    },
     setCurrentAlbum (album) {
       this.currentAlbum = album
       EventBus.$emit('set-album', {
@@ -153,15 +158,17 @@ export default {
     }
   },
   created () {
+    EventBus.$on('fetch-albums', () => {
+      this.fetchAlbums().then(res => this.albums = res.data.data)
+    })
+
     this.$http({
       url: '/articles/' + this.$route.params.id
     }).then((response) => {
       this.article = response.data
       this.setInputTime(this.article.published_at)
 
-      return this.$http({
-        url: '/articles/' + this.$route.params.id + '/albums'
-      })
+      return this.fetchAlbums()
     })
       .then((response) => {
         let albumId = response.data.first.id
