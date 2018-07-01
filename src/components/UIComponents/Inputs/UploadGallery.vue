@@ -4,7 +4,7 @@
       v-on:click="$upload.reset('resource-gallery')" 
       :disabled="$upload.meta('resource-gallery').status === 'sending'"
       class="btn btn-xs">
-        Clear
+        Reset
     </button>
 
     <div 
@@ -29,9 +29,6 @@
     </div>
 
     <div>
-        <div v-if="!$upload.files('resource-gallery').all.length">
-            No uploads here yet.
-        </div>
 
         <div v-for="file in $upload.files('resource-gallery').progress">
             <div>
@@ -50,20 +47,6 @@
                 {{ file.name }}
                 <br/>
                 Queued for upload
-            </div>
-        </div>
-
-        <div v-for="file in $upload.files('resource-gallery').complete">
-            <div v-if="file.errors.length">
-                {{ file.name }}
-                <br/>
-                {{ file.errors[0].message }}
-            </div>
-            
-            <div v-if="!file.errors.length">
-                {{ file.name }}
-                <br/>
-                Uploaded successfully.
             </div>
         </div>
     </div>
@@ -108,8 +91,16 @@ export default {
           this.notify('File handling complete.', 'info')
           this.reset()
         },
-        onError (error) {
-          this.notify(`An error occured while uploading: ${error}`, 'danger')
+        onError () {
+          let gallery = this.$upload.files('resource-gallery')
+          for (let i = 0; i < gallery.all.length; i++) {
+            if (gallery.all[i].errors) {
+              for (let e = 0; e < gallery.all[i].errors.length; e++) {
+                this.notify(`Error for file ${gallery.all[i].name} : ${gallery.all[i].errors[e].message}`, 'warning')
+              }
+            }
+          }
+          this.reset()
         },
         http (data) {
           axios.post(data.url, data.body)
