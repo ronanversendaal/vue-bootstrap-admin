@@ -5,7 +5,7 @@
         <div class="col-sm-12">
           <card>
             <template slot="header">
-              <h4 class="card-title">#{{this.article.id}} - {{this.article.title}}</h4>
+              <h4 class="card-title">#{{this.resource.id}} - {{this.resource.title}}</h4>
               <p class="card-category">Edit article</p>
             </template>
             <form>
@@ -14,7 +14,7 @@
                   <fg-input type="text"
                             label="Title"
                             placeholder="Title"
-                            v-model="article.title">
+                            v-model="resource.title">
                   </fg-input>
                 </div>
               </div>
@@ -23,7 +23,7 @@
                   <fg-input type="text"
                             label="Subtitle"
                             placeholder="Subtitle"
-                            v-model="article.subtitle">
+                            v-model="resource.subtitle">
                   </fg-input>
                 </div>
               </div>
@@ -37,7 +37,7 @@
                     <vue-editor 
                     :customModules="customModulesForEditor"
                     :editorOptions="editorSettings" 
-                    v-model="article.body">
+                    v-model="resource.body">
                     </vue-editor>
                   </div>
                 </div>
@@ -101,7 +101,7 @@ import UploadGallery from 'src/Components/UIComponents/Inputs/UploadGallery'
 import { EventBus } from 'src/main'
 
 import notificationMixin from 'src/mixins/notificationMixin.js'
-// import albumManagementMixin from 'src/mixins/albumManangementMixin.js'
+import albumManagementMixin from 'src/mixins/albumManagementMixin.js'
 
 export default {
   components: {
@@ -109,12 +109,11 @@ export default {
     VueEditor,
     UploadGallery
   },
-  mixins: [publishingMixin, notificationMixin],
+  mixins: [publishingMixin, notificationMixin, albumManagementMixin],
   data () {
     return {
-      currentAlbum: null,
       albums: [],
-      article: {
+      resource: { // album
         id: null,
         title: null,
         subtitle: null,
@@ -132,32 +131,7 @@ export default {
     }
   },
   methods: {
-    createAlbum () {
-      return this.$http({
-        method: 'POST',
-        url: '/albums',
-        data: {article_id: this.article.id}
-      }).then((res) => {
-        let album = res.data
-
-        this.albums.push(album)
-        this.setCurrentAlbum(album.id)
-      })
-    },
-    fetchAlbums () {
-      return this.$http({
-        url: '/articles/' + this.$route.params.id + '/albums'
-      })
-    },
-    deleteFromAlbum (imageId) {
-      return this.$http({
-        method: 'DELETE',
-        url: `/images/${imageId}`
-      })
-    },
     deleteImage (imageId) {
-      // Confirm deletion
-
       return this.deleteFromAlbum(imageId)
         .then((res) => {
           this.notify('Image deleted')
@@ -177,16 +151,16 @@ export default {
     saveForm () {
       const data = new URLSearchParams()
 
-      this.article.published_at = this.getCurrentPublishing()
+      this.resource.published_at = this.getCurrentPublishing()
 
-      for (let key in this.article) {
-        data.append(key, this.article[key])
+      for (let key in this.resource) {
+        data.append(key, this.resource[key])
       }
 
       // Might set this in seperate layer.
       this.$http({
         method: 'PUT',
-        url: '/articles/' + this.article.id,
+        url: '/articles/' + this.resource.id,
         data
       }).then((response) => {
         this.notify(`Article '${response.data.title}' saved!`)
@@ -197,7 +171,7 @@ export default {
   },
   created () {
     EventBus.$on('fetch-albums', () => {
-      this.fetchAlbums().then(res => {
+      this.fetchAlbums('article', this.$route.params.id).then(res => {
         if (res.data.data.length > 0) {
           this.albums = res.data.data
         }
@@ -207,10 +181,10 @@ export default {
     this.$http({
       url: '/articles/' + this.$route.params.id
     }).then((response) => {
-      this.article = response.data
-      this.setInputTime(this.article.published_at)
+      this.resource = response.data
+      this.setInputTime(this.resource.published_at)
 
-      return this.fetchAlbums()
+      return this.fetchAlbums('article', this.resource.id)
     })
       .then((response) => {
         if (response.data.first) {
@@ -218,7 +192,7 @@ export default {
           this.albums = response.data.data
 
           EventBus.$emit('set-resource', {
-            resource: this.article,
+            resource: this.resource,
             id: albumId
           })
 

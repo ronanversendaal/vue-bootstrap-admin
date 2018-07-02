@@ -97,6 +97,7 @@ import UploadGallery from 'src/Components/UIComponents/Inputs/UploadGallery'
 import { EventBus } from 'src/main'
 
 import notificationMixin from 'src/mixins/notificationMixin.js'
+import albumManagementMixin from 'src/mixins/albumManagementMixin.js'
 
 export default {
   components: {
@@ -104,10 +105,9 @@ export default {
     VueEditor,
     UploadGallery
   },
-  mixins: [publishingMixin, notificationMixin],
+  mixins: [publishingMixin, notificationMixin, albumManagementMixin],
   data () {
     return {
-      currentAlbum: null,
       albums: [],
       project: {
         id: null,
@@ -127,17 +127,6 @@ export default {
     }
   },
   methods: {
-    fetchAlbums () {
-      return this.$http({
-        url: '/projects/' + this.$route.params.id + '/albums'
-      })
-    },
-    deleteFromAlbum (imageId) {
-      return this.$http({
-        method: 'DELETE',
-        url: `/images/${imageId}`
-      })
-    },
     deleteImage (imageId) {
       // Confirm deletion
 
@@ -180,7 +169,7 @@ export default {
   },
   created () {
     EventBus.$on('fetch-albums', () => {
-      this.fetchAlbums().then(res => {
+      this.fetchAlbums('project', this.$route.params.id).then(res => {
         if (res.data.data.length > 0) {
           this.albums = res.data.data
         }
@@ -191,9 +180,9 @@ export default {
       url: '/projects/' + this.$route.params.id
     }).then((response) => {
       this.project = response.data
-      this.setInputTime(this.project.published_at)
+      this.setInputTime(this.project.published_at.date)
 
-      return this.fetchAlbums()
+      return this.fetchAlbums('project', this.project.id)
     })
       .then((response) => {
         if (response.data.first) {
