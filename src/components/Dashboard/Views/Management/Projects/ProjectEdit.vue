@@ -5,8 +5,8 @@
         <div class="col-sm-12">
           <card>
             <template slot="header">
-              <h4 class="card-title">#{{this.article.id}} - {{this.article.title}}</h4>
-              <p class="card-category">Edit article</p>
+              <h4 class="card-title">#{{this.project.id}} - {{this.project.title}}</h4>
+              <p class="card-category">Edit project</p>
             </template>
             <form>
               <div class="row">
@@ -14,16 +14,16 @@
                   <fg-input type="text"
                             label="Title"
                             placeholder="Title"
-                            v-model="article.title">
+                            v-model="project.title">
                   </fg-input>
                 </div>
               </div>
               <div class="row">
                 <div class="col-sm-12">
                   <fg-input type="text"
-                            label="Subtitle"
-                            placeholder="Subtitle"
-                            v-model="article.subtitle">
+                            label="Heading"
+                            placeholder="Heading"
+                            v-model="project.head">
                   </fg-input>
                 </div>
               </div>
@@ -31,13 +31,13 @@
                 <div class="col-sm-12">
                   <div class="form-group">
                     <label class="control-label">
-                      Article content
+                      project content
                     </label>
 
                     <vue-editor 
                     :customModules="customModulesForEditor"
                     :editorOptions="editorSettings" 
-                    v-model="article.body">
+                    v-model="project.description">
                     </vue-editor>
                   </div>
                 </div>
@@ -66,14 +66,10 @@
             <template slot="header">
               <h4 class="card-title">Manage images</h4>
             </template>
-            
-            <div>
-              <button @click="createAlbum()" class="btn btn-primary">Create new album</button>
-            </div>
-                  
+   
             <UploadGallery v-show="currentAlbum"/>
-            <div v-for="album in albums" :key="album.id" class="album" :class="{ selected: album.id === currentAlbum}" @click="setCurrentAlbum(album.id)">
-              <div class="row">
+            <div v-for="album in albums" :key="album.id" class="album" :class="{ selected: album.id === currentAlbum}">
+              <div class="row" @click="setCurrentAlbum(album.id)">
                 <div v-for="image in album.images.data" :key="image.id" class="col-sm-4">
                   <button class="close">
                       <span aria-hidden="true" @click="deleteImage(image.id, album.id)">&times;</span>
@@ -101,7 +97,6 @@ import UploadGallery from 'src/Components/UIComponents/Inputs/UploadGallery'
 import { EventBus } from 'src/main'
 
 import notificationMixin from 'src/mixins/notificationMixin.js'
-// import albumManagementMixin from 'src/mixins/albumManangementMixin.js'
 
 export default {
   components: {
@@ -114,12 +109,12 @@ export default {
     return {
       currentAlbum: null,
       albums: [],
-      article: {
+      project: {
         id: null,
         title: null,
-        subtitle: null,
+        head: null,
         published_at: null,
-        body: null
+        description: null
       },
       customModulesForEditor: [
         { alias: 'imageDrop', module: ImageDrop }
@@ -132,21 +127,9 @@ export default {
     }
   },
   methods: {
-    createAlbum () {
-      return this.$http({
-        method: 'POST',
-        url: '/albums',
-        data: {article_id: this.article.id}
-      }).then((res) => {
-        let album = res.data
-
-        this.albums.push(album)
-        this.setCurrentAlbum(album.id)
-      })
-    },
     fetchAlbums () {
       return this.$http({
-        url: '/articles/' + this.$route.params.id + '/albums'
+        url: '/projects/' + this.$route.params.id + '/albums'
       })
     },
     deleteFromAlbum (imageId) {
@@ -177,21 +160,21 @@ export default {
     saveForm () {
       const data = new URLSearchParams()
 
-      this.article.published_at = this.getCurrentPublishing()
+      this.project.published_at = this.getCurrentPublishing()
 
-      for (let key in this.article) {
-        data.append(key, this.article[key])
+      for (let key in this.project) {
+        data.append(key, this.project[key])
       }
 
       // Might set this in seperate layer.
       this.$http({
         method: 'PUT',
-        url: '/articles/' + this.article.id,
+        url: '/projects/' + this.project.id,
         data
       }).then((response) => {
-        this.notify(`Article '${response.data.title}' saved!`)
+        this.notify(`project '${response.data.title}' saved!`)
       }).catch((error) => {
-        this.notify(`Could not save the article! <br/>${error.message}`, 'danger')
+        this.notify(`Could not save the project! <br/>${error.message}`, 'danger')
       })
     }
   },
@@ -205,10 +188,10 @@ export default {
     })
 
     this.$http({
-      url: '/articles/' + this.$route.params.id
+      url: '/projects/' + this.$route.params.id
     }).then((response) => {
-      this.article = response.data
-      this.setInputTime(this.article.published_at)
+      this.project = response.data
+      this.setInputTime(this.project.published_at)
 
       return this.fetchAlbums()
     })
@@ -218,7 +201,7 @@ export default {
           this.albums = response.data.data
 
           EventBus.$emit('set-resource', {
-            resource: this.article,
+            resource: this.project,
             id: albumId
           })
 

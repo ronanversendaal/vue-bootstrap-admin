@@ -15,6 +15,10 @@ import ArticleList from 'src/components/Dashboard/Views/Management/Articles/Arti
 import Articles from 'src/components/Dashboard/Views/Management/Articles/'
 import ArticleEdit from 'src/components/Dashboard/Views/Management/Articles/ArticleEdit'
 
+import ProjectList from 'src/components/Dashboard/Views/Management/Projects/Projects'
+import Projects from 'src/components/Dashboard/Views/Management/Projects/'
+import ProjectEdit from 'src/components/Dashboard/Views/Management/Projects/ProjectEdit'
+
 const routes = [
   {
     path: '/',
@@ -79,27 +83,22 @@ const routes = [
       },
       {
         path: 'projects',
-        // component: lazyLoading('management/projects', true),
+        component: Projects,
+        redirect: '/admin/projects',
         meta: {
-          link: 'management/projects/index.vue'
+          auth: true,
+          link: '../components/Dashboard/Views/Management/Projects/index.vue'
         },
-        children: [
-          {
-            name: 'Projects',
-            path: '',
-            // component: lazyLoading('management/projects/Projects'),
-            meta: {
-              link: 'management/projects/Projects.vue'
-            }
-          },
-          {
-            name: 'ProjectEdit',
-            path: ':id/edit',
-            // component: lazyLoading('management/projects/ProjectEdit'),
-            meta: {
-              link: 'management/projects/ProjectEdit.vue'
-            }
-          }
+        children: [{
+          name: 'Projects',
+          path: '/',
+          component: ProjectList
+        },
+        {
+          name: 'ProjectEdit',
+          path: ':id/edit',
+          component: ProjectEdit
+        }
         ]
       },
       {

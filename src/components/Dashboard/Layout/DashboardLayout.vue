@@ -25,7 +25,11 @@
       <sidebar-link to="/admin/articles">
           <i class="nc-icon nc-paper-2"></i>
           <p>Articles</p>
-        </sidebar-link>
+      </sidebar-link>
+      <sidebar-link to="/admin/projects">
+        <i class="nc-icon nc-paper-2"></i>
+        <p>Projects</p>
+      </sidebar-link>
       <sidebar-link to="/admin/notifications">
         <i class="nc-icon nc-bell-55"></i>
         <p>Notifications</p>
