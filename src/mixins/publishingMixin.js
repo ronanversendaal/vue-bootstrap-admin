@@ -15,7 +15,7 @@ var publishingMixin = {
         if (this.current.time) {
           dateTime = this.current.date + 'T' + this.current.time
         }
-        return this.$moment(dateTime).format('YYYY-MM-DD HH:mm')
+        return this.$moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
       } else if (this.current.date === '') {
         return null
       }
