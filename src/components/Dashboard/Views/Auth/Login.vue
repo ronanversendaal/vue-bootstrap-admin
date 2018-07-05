@@ -72,7 +72,6 @@ export default {
   },
   mounted () {
     if (this.$auth.redirect()) {
-      console.log('Redirect from: ' + this.$auth.redirect().from.name)
     }
     // Can set query parameter here for auth redirect or just do it silently in login redirect.
   },
@@ -88,14 +87,13 @@ export default {
         redirect: {name: redirect ? redirect.from.name : 'Overview'},
         success (res) {
           this.$auth.token('default_auth_token', res.data.access_token)
-          console.log('Fucking login!!!', JSON.stringify(this.$auth.token, null, 2))
         },
         error (err) {
           if (err) {
             this.error = err.response.data.error
           } else {
             // Something happened in setting up the request that triggered an Error
-            console.log('Error', err)
+
           }
         }
       })
