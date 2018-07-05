@@ -31,9 +31,9 @@
                     </router-link>
                   </td>
                   <td>
-                    <router-link class="btn btn-danger btn-fill btn-block btn-xs" :to="{name: 'ProjectEdit', params : {id: project.id}}">
+                    <button class="btn btn-danger btn-fill btn-block btn-xs"  v-confirm="{loader : true, ok: dialog => deleteProject(dialog, project.id), message: 'Are you sure you want to delete this resource?'}">
                       <i class="fa fa-close"></i>
-                    </router-link>
+                    </button>
                   </td>
                 </tr>
                 </tbody>
@@ -71,8 +71,31 @@ export default {
     }).catch((error) => {
       console.log(error)
     })
-  }
-
+  },
+  methods: {
+    deleteProject (dialog, id) {
+      return this.$http({
+        method: 'DELETE',
+        url: `/projects/${id}`
+      }).then((response) => {
+        this.notify('Resource deleted')
+        return this.fetchProjects();
+      }).catch((error) => {
+        this.notify(error.message, 'warning')
+      }).finally(() => {
+        dialog.close();
+      })
+    },
+    fetchProjects () {
+      return this.$http({
+        url: '/projects'
+      }).then((response) => {
+        this.projects = this.table1.data = response.data
+      }).catch((error) => {
+        this.notify(error.message, 'danger')
+      })
+    }
+  },
 }
 </script>
 

@@ -5,8 +5,7 @@
         <div class="col-sm-12">
           <card>
             <template slot="header">
-              <h4 class="card-title">#{{this.resource.id}} - {{this.resource.title}}</h4>
-              <p class="card-category">Edit article</p>
+              <h4 class="card-title">Create new article</h4>
             </template>
             <form>
               <div class="row">
@@ -14,7 +13,7 @@
                   <fg-input type="text"
                             label="Title"
                             placeholder="Title"
-                            v-model="resource.title">
+                            v-model="article.title">
                   </fg-input>
                 </div>
               </div>
@@ -23,7 +22,7 @@
                   <fg-input type="text"
                             label="Subtitle"
                             placeholder="Subtitle"
-                            v-model="resource.subtitle">
+                            v-model="article.subtitle">
                   </fg-input>
                 </div>
               </div>
@@ -31,13 +30,13 @@
                 <div class="col-sm-12">
                   <div class="form-group">
                     <label class="control-label">
-                      Article content
+                      article content
                     </label>
 
                     <vue-editor 
                     :customModules="customModulesForEditor"
                     :editorOptions="editorSettings" 
-                    v-model="resource.body">
+                    v-model="article.body">
                     </vue-editor>
                   </div>
                 </div>
@@ -62,27 +61,6 @@
               </div>
             </form>
           </card>
-          <card>
-            <template slot="header">
-              <h4 class="card-title">Manage images</h4>
-            </template>
-            
-            <div>
-              <button @click="createAlbum()" class="btn btn-primary">Create new album</button>
-            </div>
-                  
-            <UploadGallery v-show="currentAlbum"/>
-            <div v-for="album in albums" :key="album.id" class="album" :class="{ selected: album.id === currentAlbum}" @click="setCurrentAlbum(album.id)">
-              <div class="row">
-                <div v-for="image in album.images.data" :key="image.id" class="col-sm-4">
-                  <button class="close">
-                      <span aria-hidden="true" @click="deleteImage(image.id, album.id)">&times;</span>
-                  </button>
-                  <img :src="image.path" class="img-fluid" />
-                </div>
-              </div>
-            </div>
-          </card>
         </div>
       </div>
     </div>
@@ -96,24 +74,19 @@ import Card from 'src/components/UIComponents/Cards/Card.vue'
 import { VueEditor } from 'vue2-editor-pure'
 import { ImageDrop } from 'quill-image-drop-module'
 import publishingMixin from 'src/mixins/publishingMixin.js'
-import UploadGallery from 'src/Components/UIComponents/Inputs/UploadGallery'
-
-import { EventBus } from 'src/main'
 
 import notificationMixin from 'src/mixins/notificationMixin.js'
-import albumManagementMixin from 'src/mixins/albumManagementMixin.js'
 
 export default {
   components: {
     Card,
-    VueEditor,
-    UploadGallery
+    VueEditor
   },
-  mixins: [publishingMixin, notificationMixin, albumManagementMixin],
+  mixins: [publishingMixin, notificationMixin],
   data () {
     return {
       albums: [],
-      resource: { // album
+      article: {
         id: null,
         title: null,
         subtitle: null,
@@ -130,80 +103,32 @@ export default {
       }
     }
   },
+  created () {
+    this.setInputTime()
+  },
   methods: {
-    deleteImage (imageId) {
-      return this.deleteFromAlbum(imageId)
-        .then((res) => {
-          this.notify('Image deleted')
-          EventBus.$emit('fetch-albums')
-        })
-        .catch((err) => {
-          console.log(err)
-          this.notify('Could not delete image', 'warning')
-        })
-    },
-    setCurrentAlbum (album) {
-      this.currentAlbum = album
-      EventBus.$emit('set-album', {
-        id: album
-      })
-    },
     saveForm () {
       const data = new URLSearchParams()
 
-      this.resource.published_at = this.getCurrentPublishing()
+      this.article.published_at = this.getCurrentPublishing()
 
-      for (let key in this.resource) {
-        data.append(key, this.resource[key])
+      for (let key in this.article) {
+        data.append(key, this.article[key])
       }
 
       // Might set this in seperate layer.
       this.$http({
-        method: 'PUT',
-        url: '/articles/' + this.resource.id,
+        method: 'POST',
+        url: '/articles',
         data
       }).then((response) => {
         this.notify(`Article '${response.data.title}' saved!`)
+        this.$router.push({name: 'ArticleEdit', params: {id: response.data.id}})
       }).catch((error) => {
         this.notify(`Could not save the article! <br/>${error.message}`, 'danger')
       })
     }
-  },
-  created () {
-    EventBus.$on('fetch-albums', () => {
-      this.fetchAlbums('article', this.$route.params.id).then(res => {
-        if (res.data.data.length > 0) {
-          this.albums = res.data.data
-        }
-      })
-    })
-
-    this.$http({
-      url: '/articles/' + this.$route.params.id
-    }).then((response) => {
-      this.resource = response.data
-      this.setInputTime(this.resource.published_at.date)
-
-      return this.fetchAlbums('article', this.resource.id)
-    })
-      .then((response) => {
-        if (response.data.first) {
-          let albumId = response.data.first.id
-          this.albums = response.data.data
-
-          EventBus.$emit('set-resource', {
-            resource: this.resource,
-            id: albumId
-          })
-
-          this.setCurrentAlbum(albumId)
-        }
-      })
-      .catch((error) => {
-        this.notify(`Error connecting to server: <br/>${error.message}`, 'danger')
-      })
   }
-
 }
 </script>
 

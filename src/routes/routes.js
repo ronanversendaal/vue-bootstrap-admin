@@ -13,10 +13,12 @@ import Login from 'src/components/Dashboard/Views/Auth/Login'
 
 import ArticleList from 'src/components/Dashboard/Views/Management/Articles/Articles'
 import Articles from 'src/components/Dashboard/Views/Management/Articles/'
+import ArticleCreate from 'src/components/Dashboard/Views/Management/Articles/ArticleCreate'
 import ArticleEdit from 'src/components/Dashboard/Views/Management/Articles/ArticleEdit'
 
 import ProjectList from 'src/components/Dashboard/Views/Management/Projects/Projects'
 import Projects from 'src/components/Dashboard/Views/Management/Projects/'
+import ProjectCreate from 'src/components/Dashboard/Views/Management/Projects/ProjectCreate'
 import ProjectEdit from 'src/components/Dashboard/Views/Management/Projects/ProjectEdit'
 
 const routes = [
@@ -78,6 +80,11 @@ const routes = [
             name: 'ArticleEdit',
             path: ':id/edit',
             component: ArticleEdit
+          },
+          {
+            name: 'ArticleCreate',
+            path: '/create',
+            component: ArticleCreate
           }
         ]
       },
@@ -89,16 +96,22 @@ const routes = [
           auth: true,
           link: '../components/Dashboard/Views/Management/Projects/index.vue'
         },
-        children: [{
-          name: 'Projects',
-          path: '/',
-          component: ProjectList
-        },
-        {
-          name: 'ProjectEdit',
-          path: ':id/edit',
-          component: ProjectEdit
-        }
+        children: [
+          {
+            name: 'Projects',
+            path: '/',
+            component: ProjectList
+          },
+          {
+            name: 'ProjectEdit',
+            path: ':id/edit',
+            component: ProjectEdit
+          },
+          {
+            name: 'ProjectCreate',
+            path: '/create',
+            component: ProjectCreate
+          }
         ]
       },
       {

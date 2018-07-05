@@ -5,7 +5,11 @@
         <div class="col-12">
           <card>
             <template slot="header">
-              <h4 class="card-title">Articles</h4>
+              <h4 class="card-title">Articles
+                  <router-link :to="{name: 'ArticleCreate'}" class="btn btn-success btn-fill pull-right">
+                    <i class="fa fa-plus"></i> Create
+                  </router-link>
+              </h4>
               <p class="card-category">Manage publishings</p>
             </template>
             <div class="table-responsive">
@@ -31,9 +35,9 @@
                     </router-link>
                   </td>
                   <td>
-                    <router-link class="btn btn-danger btn-fill btn-block btn-xs" :to="{name: 'ArticleEdit', params : {id: article.id}}">
+                    <button class="btn btn-danger btn-fill btn-block btn-xs" v-confirm="{loader : true, ok: dialog => deleteArticle(dialog, article.id), message: 'Are you sure you want to delete this resource?'}">
                       <i class="fa fa-close"></i>
-                    </router-link>
+                    </button>
                   </td>
                 </tr>
                 </tbody>
@@ -63,14 +67,32 @@ export default {
       }
     }
   },
+  methods: {
+    deleteArticle (dialog, id) {
+      return this.$http({
+        method: 'DELETE',
+        url: `/articles/${id}`
+      }).then((response) => {
+        this.notify('Resource deleted')
+        return this.fetchArticles();
+      }).catch((error) => {
+        this.notify(error.message, 'warning')
+      }).finally(() => {
+        dialog.close();
+      })
+    },
+    fetchArticles () {
+      return this.$http({
+        url: '/articles'
+      }).then((response) => {
+        this.articles = this.table1.data = response.data
+      }).catch((error) => {
+        this.notify(error.message, 'danger')
+      })
+    }
+  },
   mounted () {
-    this.$http({
-      url: '/articles'
-    }).then((response) => {
-      this.articles = this.table1.data = response.data
-    }).catch((error) => {
-      console.log(error)
-    })
+    this.fetchArticles()
   }
 
 }

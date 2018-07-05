@@ -9,12 +9,16 @@ import LightBootstrap from './light-bootstrap-main'
 import axios from './plugins/axios'
 import VueAxios from 'vue-axios'
 import VueAuth from '@websanova/vue-auth'
+import VuejsDialog from "vuejs-dialog"
+
 // router setup
 import routes from './routes/routes'
 
 Vue.use(VueRouter)
 Vue.use(require('vue-moment'))
 Vue.use(require('@websanova/vue-upload'))
+Vue.use(VuejsDialog);
+
 // configure router
 const router = new VueRouter({
   routes, // short for routes: routes

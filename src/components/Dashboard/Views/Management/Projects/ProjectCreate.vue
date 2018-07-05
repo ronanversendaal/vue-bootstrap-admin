@@ -5,8 +5,7 @@
         <div class="col-sm-12">
           <card>
             <template slot="header">
-              <h4 class="card-title">#{{this.project.id}} - {{this.project.title}}</h4>
-              <p class="card-category">Edit project</p>
+              <h4 class="card-title">Create new project</h4>
             </template>
             <form>
               <div class="row">
@@ -62,23 +61,6 @@
               </div>
             </form>
           </card>
-          <card>
-            <template slot="header">
-              <h4 class="card-title">Manage images</h4>
-            </template>
-   
-            <UploadGallery v-show="currentAlbum"/>
-            <div v-for="album in albums" :key="album.id" class="album" :class="{ selected: album.id === currentAlbum}">
-              <div class="row" @click="setCurrentAlbum(album.id)">
-                <div v-for="image in album.images.data" :key="image.id" class="col-sm-4">
-                  <button class="close">
-                      <span aria-hidden="true" @click="deleteImage(image.id, album.id)">&times;</span>
-                  </button>
-                  <img :src="image.path" class="img-fluid" />
-                </div>
-              </div>
-            </div>
-          </card>
         </div>
       </div>
     </div>
@@ -92,20 +74,15 @@ import Card from 'src/components/UIComponents/Cards/Card.vue'
 import { VueEditor } from 'vue2-editor-pure'
 import { ImageDrop } from 'quill-image-drop-module'
 import publishingMixin from 'src/mixins/publishingMixin.js'
-import UploadGallery from 'src/Components/UIComponents/Inputs/UploadGallery'
-
-import { EventBus } from 'src/main'
 
 import notificationMixin from 'src/mixins/notificationMixin.js'
-import albumManagementMixin from 'src/mixins/albumManagementMixin.js'
 
 export default {
   components: {
     Card,
-    VueEditor,
-    UploadGallery
+    VueEditor
   },
-  mixins: [publishingMixin, notificationMixin, albumManagementMixin],
+  mixins: [publishingMixin, notificationMixin],
   data () {
     return {
       albums: [],
@@ -126,26 +103,10 @@ export default {
       }
     }
   },
+  created () {
+    this.setInputTime()
+  },
   methods: {
-    deleteImage (imageId) {
-      // Confirm deletion
-
-      return this.deleteFromAlbum(imageId)
-        .then((res) => {
-          this.notify('Image deleted')
-          EventBus.$emit('fetch-albums')
-        })
-        .catch((err) => {
-          console.log(err)
-          this.notify('Could not delete image', 'warning')
-        })
-    },
-    setCurrentAlbum (album) {
-      this.currentAlbum = album
-      EventBus.$emit('set-album', {
-        id: album
-      })
-    },
     saveForm () {
       const data = new URLSearchParams()
 
@@ -157,51 +118,17 @@ export default {
 
       // Might set this in seperate layer.
       this.$http({
-        method: 'PUT',
-        url: '/projects/' + this.project.id,
+        method: 'POST',
+        url: '/projects',
         data
       }).then((response) => {
-        this.notify(`project '${response.data.title}' saved!`)
+        this.notify(`Project '${response.data.title}' saved!`)
+        this.$router.push({name: 'ProjectEdit', params: {id: response.data.id}})
       }).catch((error) => {
         this.notify(`Could not save the project! <br/>${error.message}`, 'danger')
       })
     }
-  },
-  created () {
-    EventBus.$on('fetch-albums', () => {
-      this.fetchAlbums('project', this.$route.params.id).then(res => {
-        if (res.data.data.length > 0) {
-          this.albums = res.data.data
-        }
-      })
-    })
-
-    this.$http({
-      url: '/projects/' + this.$route.params.id
-    }).then((response) => {
-      this.project = response.data
-      this.setInputTime((this.project.published_at) ? this.project.published_at.date : null)
-
-      return this.fetchAlbums('project', this.project.id)
-    })
-      .then((response) => {
-        if (response.data.first) {
-          let albumId = response.data.first.id
-          this.albums = response.data.data
-
-          EventBus.$emit('set-resource', {
-            resource: this.project,
-            id: albumId
-          })
-
-          this.setCurrentAlbum(albumId)
-        }
-      })
-      .catch((error) => {
-        this.notify(`Error connecting to server: <br/>${error.message}`, 'danger')
-      })
   }
-
 }
 </script>
 
