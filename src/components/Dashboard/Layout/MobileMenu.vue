@@ -1,6 +1,6 @@
 <template>
   <ul class="nav nav-mobile-menu">
-    <drop-down>
+    <!-- <drop-down>
       <template slot="title">
         <i class="fa fa-globe"></i>
         <b class="caret"></b>
@@ -31,7 +31,7 @@
       <a class="nav-link" href="#pablo">
         <span class="no-icon">Log out</span>
       </a>
-    </li>
+    </li> -->
   </ul>
 </template>
 <script>

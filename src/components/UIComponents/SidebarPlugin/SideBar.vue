@@ -40,7 +40,7 @@
     props: {
       title: {
         type: String,
-        default: 'Ronan\'s VAD'
+        default: 'Ronan\'s Admin'
       },
       longTitle: {
         type: String,

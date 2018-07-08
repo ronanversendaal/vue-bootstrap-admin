@@ -5,7 +5,7 @@
         <div class="col-sm-12">
           <card>
             <template slot="header">
-              <h4 class="card-title">#{{this.project.id}} - {{this.project.title}}</h4>
+              <h4 class="card-title">#{{this.resource.id}} - {{this.resource.title}}</h4>
               <p class="card-category">Edit project</p>
             </template>
             <form>
@@ -14,7 +14,7 @@
                   <fg-input type="text"
                             label="Title"
                             placeholder="Title"
-                            v-model="project.title">
+                            v-model="resource.title">
                   </fg-input>
                 </div>
               </div>
@@ -23,7 +23,7 @@
                   <fg-input type="text"
                             label="Heading"
                             placeholder="Heading"
-                            v-model="project.head">
+                            v-model="resource.head">
                   </fg-input>
                 </div>
               </div>
@@ -37,7 +37,7 @@
                     <vue-editor 
                     :customModules="customModulesForEditor"
                     :editorOptions="editorSettings" 
-                    v-model="project.description">
+                    v-model="resource.description">
                     </vue-editor>
                   </div>
                 </div>
@@ -68,7 +68,7 @@
             </template>
 
             <div>
-              <button @click="createAlbum()" class="btn btn-primary">Create new album</button>
+              <button @click="createAlbum('project')" class="btn btn-primary">Create new album</button>
             </div>
    
             <UploadGallery v-show="currentAlbum"/>
@@ -113,7 +113,7 @@ export default {
   data () {
     return {
       albums: [],
-      project: {
+      resource: {
         id: null,
         title: null,
         head: null,
@@ -153,16 +153,16 @@ export default {
     saveForm () {
       const data = new URLSearchParams()
 
-      this.project.published_at = this.getCurrentPublishing()
+      this.resource.published_at = this.getCurrentPublishing()
 
-      for (let key in this.project) {
-        data.append(key, this.project[key])
+      for (let key in this.resource) {
+        data.append(key, this.resource[key])
       }
 
       // Might set this in seperate layer.
       this.$http({
         method: 'PUT',
-        url: '/projects/' + this.project.id,
+        url: '/projects/' + this.resource.id,
         data
       }).then((response) => {
         this.notify(`project '${response.data.title}' saved!`)
@@ -183,10 +183,10 @@ export default {
     this.$http({
       url: '/projects/' + this.$route.params.id
     }).then((response) => {
-      this.project = response.data
-      this.setInputTime((this.project.published_at) ? this.project.published_at.date : null)
+      this.resource = response.data
+      this.setInputTime((this.resource.published_at) ? this.resource.published_at.date : null)
 
-      return this.fetchAlbums('project', this.project.id)
+      return this.fetchAlbums('project', this.resource.id)
     })
       .then((response) => {
         if (response.data.first) {
@@ -194,7 +194,7 @@ export default {
           this.albums = response.data.data
 
           EventBus.$emit('set-resource', {
-            resource: this.project,
+            resource: this.resource,
             id: albumId
           })
 
