@@ -5,7 +5,12 @@
         <div class="col-12">
           <card>
             <template slot="header">
-              <h4 class="card-title">Projects</h4>
+              <h4 class="card-title">Projects
+                <router-link :to="{name: 'ProjectCreate'}" class="btn btn-success btn-fill pull-right">
+                    <i class="fa fa-plus"></i> Create
+                  </router-link>
+              </h4>
+              </h4>
               <p class="card-category">Manage projects</p>
             </template>
             <div class="table-responsive">
@@ -79,11 +84,11 @@ export default {
         url: `/projects/${id}`
       }).then((response) => {
         this.notify('Resource deleted')
-        return this.fetchProjects();
+        return this.fetchProjects()
       }).catch((error) => {
         this.notify(error.message, 'warning')
       }).finally(() => {
-        dialog.close();
+        dialog.close()
       })
     },
     fetchProjects () {
@@ -95,7 +100,7 @@ export default {
         this.notify(error.message, 'danger')
       })
     }
-  },
+  }
 }
 </script>
 

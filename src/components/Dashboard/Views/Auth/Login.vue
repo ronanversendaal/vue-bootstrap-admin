@@ -20,7 +20,7 @@
           </div>
           <div class="row">
             <div class="col-md-12">
-              <fg-input type="text"
+              <fg-input type="password"
                         label="Password"
                         placeholder="Password"
                         v-model="data.user.password">
@@ -89,12 +89,7 @@ export default {
           this.$auth.token('default_auth_token', res.data.access_token)
         },
         error (err) {
-          if (err) {
-            this.error = err.response.data.error
-          } else {
-            // Something happened in setting up the request that triggered an Error
-
-          }
+          this.$notify(`${err}`, 'warning')
         }
       })
     }

@@ -66,6 +66,10 @@
             <template slot="header">
               <h4 class="card-title">Manage images</h4>
             </template>
+
+            <div>
+              <button @click="createAlbum()" class="btn btn-primary">Create new album</button>
+            </div>
    
             <UploadGallery v-show="currentAlbum"/>
             <div v-for="album in albums" :key="album.id" class="album" :class="{ selected: album.id === currentAlbum}">

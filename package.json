@@ -11,7 +11,8 @@
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "test": "npm run unit",
     "lint": "eslint --ext .js,.vue src test/unit/specs",
-    "heroku-postbuild": "npm run build"
+    "heroku-postbuild": "npm run build",
+    "deploy-surge": "npm run build && surge dist admin-ronanversendaal.surge.sh"
   },
   "dependencies": {
     "@websanova/vue-auth": "^2.21.3-beta",

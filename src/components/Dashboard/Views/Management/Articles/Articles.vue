@@ -74,11 +74,11 @@ export default {
         url: `/articles/${id}`
       }).then((response) => {
         this.notify('Resource deleted')
-        return this.fetchArticles();
+        return this.fetchArticles()
       }).catch((error) => {
         this.notify(error.message, 'warning')
       }).finally(() => {
-        dialog.close();
+        dialog.close()
       })
     },
     fetchArticles () {
