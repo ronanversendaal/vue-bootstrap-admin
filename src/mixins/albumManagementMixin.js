@@ -30,6 +30,12 @@ var albumManagementMixin = {
         url: `/images/${imageId}`
       })
     },
+    deleteAlbum (albumId) {
+      return this.$http({
+        method: 'DELETE',
+        url: `/albums/${albumId}`
+      })
+    },
     deleteImage (imageId) { // Put into own component which can handle the EventBus
       return this.deleteFromAlbum(imageId)
     },

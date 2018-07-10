@@ -1,11 +1,6 @@
 <template>
   <div :id="`resource-gallery-dropzone-${album}`">
-    <button 
-      v-on:click="$upload.reset('resource-gallery')" 
-      :disabled="$upload.meta('resource-gallery').status === 'sending'"
-      class="btn btn-xs">
-        Reset
-    </button>
+    
 
     <div 
       v-on:click="$upload.select('resource-gallery')"
@@ -13,7 +8,7 @@
       class="jumbotron jumbotron-fluid">
       <div class="container">
         <p class="lead text-center" v-show="$upload.meta('resource-gallery').status === 'sending'">Uploading...</p>
-        <p class="lead text-center" v-show="$upload.meta('resource-gallery').status !== 'sending'">Click or drag to upload</p>
+        <p class="lead text-center" v-show="$upload.meta('resource-gallery').status !== 'sending'">Click or drag here to upload</p>
         <p class="text-center" v-show="$upload.meta('resource-gallery').status !== 'sending'">Click on an album to switch destination</p>
       </div>
     </div>

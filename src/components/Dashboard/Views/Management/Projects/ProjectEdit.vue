@@ -72,13 +72,22 @@
             </div>
    
             <UploadGallery v-show="currentAlbum"/>
-            <div v-for="album in albums" :key="album.id" class="album" :class="{ selected: album.id === currentAlbum}">
-              <div class="row" @click="setCurrentAlbum(album.id)">
-                <div v-for="image in album.images.data" :key="image.id" class="col-sm-4">
-                  <button class="close">
-                      <span aria-hidden="true" @click="deleteImage(image.id, album.id)">&times;</span>
+            <div v-for="album in albums" :key="album.id" class="album" :class="{ selected: album.id === currentAlbum}" @click="setCurrentAlbum(album.id)">
+              <h4 class="title">Album {{album.id}} {{(album.id === currentAlbum) ? '- Selected' : ''}}</h4>
+              <div v-if="(album.id === currentAlbum)">
+                <button class="close" v-confirm="{loader : true, ok: dialog => removeAlbum(album.id, dialog), message: 'Are you sure you want to delete this resource?'}">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="row">
+                <div v-if="(album.images.data.length > 0)" v-for="image in album.images.data" :key="image.id" class="col-sm-4 image-container">
+                  <button class="close" v-confirm="{loader : true, ok: dialog => deleteImage(image.id, album.id, dialog), message: 'Are you sure you want to delete this resource?'}">
+                      <span aria-hidden="true">&times;</span>
                   </button>
                   <img :src="image.path" class="img-fluid" />
+                </div>
+                <div v-if="(album.images.data.length === 0)" class="container"> 
+                  <p class="text-center">No images</p>
                 </div>
               </div>
             </div>
@@ -91,12 +100,12 @@
 
 <script>
 
-import Card from 'src/components/UIComponents/Cards/Card.vue'
+import Card from 'components/UIComponents/Cards/Card.vue'
 
 import { VueEditor } from 'vue2-editor-pure'
 import { ImageDrop } from 'quill-image-drop-module'
 import publishingMixin from 'src/mixins/publishingMixin.js'
-import UploadGallery from 'src/Components/UIComponents/Inputs/UploadGallery'
+import UploadGallery from 'components/UIComponents/Inputs/UploadGallery'
 
 import { EventBus } from 'src/main'
 
@@ -131,17 +140,32 @@ export default {
     }
   },
   methods: {
-    deleteImage (imageId) {
+    removeAlbum (albumId, dialog) {
+      // Confirm deletion
+
+      return this.deleteAlbum(albumId)
+        .then((res) => {
+          this.notify('Album deleted')
+          EventBus.$emit('fetch-albums')
+          dialog.close()
+        })
+        .catch((err) => {
+          this.notify('Could not delete album: ' + err, 'warning')
+          dialog.close()
+        })
+    },
+    deleteImage (imageId, albumId, dialog) {
       // Confirm deletion
 
       return this.deleteFromAlbum(imageId)
         .then((res) => {
           this.notify('Image deleted')
           EventBus.$emit('fetch-albums')
+          dialog.close()
         })
         .catch((err) => {
-          console.log(err)
-          this.notify('Could not delete image', 'warning')
+          this.notify('Could not delete image: ' + err, 'warning')
+          dialog.close()
         })
     },
     setCurrentAlbum (album) {
@@ -222,25 +246,38 @@ export default {
 }
 
 .album{
+  position: relative;
   margin: 15px 0;
   padding: 15px;
-  img{
-    margin : 10px 0;
+  min-height: 200px;
+  outline: 1px solid #444; // $black_hr
+
+  .image-container{
+    img{
+      margin : 10px 0;
+      outline: 1px solid #444;
+      
+    }
+    .close{
+      top: 0px;
+      right: 10px;
+    }
   }
+  
   .close {
     border-radius: 25%;
     position: absolute;
     background: #333333;
     color: white;
-    top: 0px;
-    right: 10px;
     border-radius: 50%;
     padding: 0px 5px;
     opacity: 0.9;
+    top: -10px;
+    right: -10px;
     border: 2px solid white
   }
   &.selected{
-   outline: 1px solid #333333;
+   outline: 1px solid #1DC7EA; // info_color
   }
 }
 </style>
